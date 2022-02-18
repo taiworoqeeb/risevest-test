@@ -39,6 +39,17 @@ router
 
 router
 .route('/filestatus')
-.delete(userAuth, checkRole(["admin"]), FileAttribute)
+.delete(userAuth, checkRole(["admin"]), FileAttribute);
+
+router
+.post('/logout', (req, res) => {
+    req.logout();
+    req.session.destroy((err) => {
+        res.json('successfully logged out')
+    })
+    res.clearCookie('connect.sid');
+    
+    //res.redirect('/')
+});
 
 module.exports = router;
