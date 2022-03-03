@@ -6,7 +6,7 @@ const username = process.env.POSTGRES_USER;
 const password = process.env.POSTGRES_PASSWORD;
 
 var db = new Sequelize(database, username, password, {
-    host: process.env.DB_HOST,
+    host: 'localhost' || process.env.DB_HOST,
     dialect: 'postgres',
   
     pool: {

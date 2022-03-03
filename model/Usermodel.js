@@ -39,9 +39,8 @@ const User = db.define('User', {
             default: 'user'
         }
 });
-(async() => {
-    await User.sync();
-})();
+
+//User.sync();
 
 
 module.exports = User;
