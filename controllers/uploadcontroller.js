@@ -28,12 +28,12 @@ const uploadToS3Bucket = (image, filePath) => {
     });
   };
 
-exports.Download = async (req, res) => {
-    const userinfo = req.params.username;
+exports.Download = async (userinfo, req, res) => {
+    //const userinfo = req.params.username;
     const { folder, filename} = req.body;
     try {
         const user = await User.findOne({ where: {
-            username: userinfo
+            username: userinfo.username
         }})
         if(user){
             if(folder){
@@ -68,21 +68,24 @@ exports.Download = async (req, res) => {
       
 
 
-exports.Uploads = async (req, res) => {
+exports.Uploads = async (userinfo, req, res) => {
         var { folder } = req.body;
     try {
        const user =  await User.findOne({ 
             where: {
-                username: `${req.params.username}`
+                username: `${userinfo.username}`
             }
         })
        const fileinfo = await File.findOne({
             where: {
-                userid: `${user.id}`
-            }
+                filename: `${req.files.file.name}`
+            },
+            include: [User]
         })
         
             if(fileinfo){
+                res.status(400).send("file already exist")
+            } else{
                 if(folder){
                     var filepath = `${user.username}/${folder}/${req.files.file.name}`
                     if(req.files.file.size > 200000000) {
@@ -91,6 +94,7 @@ exports.Uploads = async (req, res) => {
                     await uploadToS3Bucket(req.files.file.data, filepath);
                     var location = `https://risevest-test.s3.amazonaws.com/${user.username}/${folder}/${req.files.file.name}`
                     filedata = new File({
+                        userid: user.id,
                         filename: req.files.file.name,
                         fileurl: location,
                         file_dir: filepath,
@@ -107,24 +111,6 @@ exports.Uploads = async (req, res) => {
                     await uploadToS3Bucket(req.files.file.data, filepath)
                     var location = `https://risevest-test.s3.amazonaws.com/${user.username}/${req.files.file.name}`
                     filedata = new File({
-                        filename: req.files.name,
-                        fileurl: location,
-                        file_dir: filepath,
-                    })
-
-                    await filedata.save();
-                    res.status(200).json(filedata);
-                }
-            }
-            } else{
-                if(folder){
-                    var filepath = `${user.username}/${folder}/${req.files.file.name}`
-                    if(req.files.file.size > 200000000) {
-                        res.status(400).json("file size exceeds 200mb")
-                    } else{
-                    await uploadToS3Bucket(req.files.file.data, filepath)
-                    var location = `https://risevest-test.s3.amazonaws.com/${user.username}/${folder}/${req.files.file.name}`
-                    filedata = new File({
                         userid: user.id,
                         filename: req.files.file.name,
                         fileurl: location,
@@ -134,24 +120,7 @@ exports.Uploads = async (req, res) => {
                     await filedata.save();
                     res.status(200).json(filedata);
                 }
-                } else{
-                    var filepath = `${user.username}/${req.files.file.name}`
-                    if(req.files.file.size > 200000000) {
-                        res.status(400).json("file size exceeds 200mb")
-                    } else{
-                   await uploadToS3Bucket(req.files.file.data, filepath)
-                   var location = `https://risevest-test.s3.amazonaws.com/${user.username}/${req.files.file.name}`
-                        filedata = new File({
-                            userid: user.id,
-                            filename: req.files.file.name,
-                            fileurl: location,
-                            file_dir: filepath,
-                        })
-
-                    await filedata.save();
-                    res.status(200).json(filedata);
-                    }
-                }
+            }
             }
         
         

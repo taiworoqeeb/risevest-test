@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../configs/config');
-const user = require('./Usermodel');
+const User = require('./Usermodel');
 const { nanoid } = require('nanoid');
 
 
@@ -30,6 +30,8 @@ const File = db.define('File', {
     }
 });
 
-user.hasMany(File, {foreignKey: 'userid'});
+File.belongsTo(User, {foreignKey: 'userid'})
+User.hasMany(File, {foreignKey: 'userid'});
+
 
 module.exports = File;

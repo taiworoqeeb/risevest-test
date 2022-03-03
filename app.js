@@ -10,9 +10,17 @@ const session = require('express-session');
 const redis = require('redis');
 const RedisStore = require('connect-redis')(session);
 require('dotenv').config()
-const fileUpload = require('express-fileupload')
+const fileUpload = require('express-fileupload');
 
-const redisClient = redis.createClient({ legacyMode: true });
+
+
+
+const redisURL = process.env.REDIS_URL
+const redisClient = redis.createClient({
+  url: redisURL,
+  no_ready_check: true,
+  legacyMode: true
+});
 
 //Configure redis client
 redisClient.connect().catch(console.error);
@@ -56,10 +64,16 @@ db.authenticate()
 
 
 const port = process.env.PORT;
-app.listen(port, (err) => {
+const Host = '0.0.0.0';
+
+
+app.listen(port, Host ,(err) => {
   if (err) console.log("Error in Server setup");
   console.log(`listening to http://localhost:${port}`);
 });
 
 
-module.exports = app;
+module.exports = {
+  app, 
+  redisClient
+};

@@ -3,6 +3,7 @@ const User = require('../model/Usermodel');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const passport = require('passport');
+//const { redisClient } = require('../app')
 
 
 exports.RegisterUser = async (role, req, res) => {
@@ -72,15 +73,23 @@ exports.LoginUser = async (role, req, res) => {
                     username: user.username, 
                     role: user.role, 
                     id: user.id}, 
-                    process.env.TOKEN, { expiresIn: "1 days"});
+                    process.env.TOKEN, { expiresIn: "24h"});
+
+                //await redisClient.set('token', `Bearer ${token}`);
+
+                //const tokenvalue = await redisClient.get('token')
     
                 let result = {
                     fullname: user.fullname,
                     username: user.username,
                     role: user.role,
                     token: `Bearer ${token}`,
-                    expiresIn: 168
+                    expiresIn: 24
                 };
+
+               //await redisClient.set('token', `Bearer ${token}`)
+
+
     
                return res.status(200).json({
                     ... result,
@@ -116,7 +125,7 @@ exports.profile = user => {
         fullname: user.fullname,
         username: user.username,
         email: user.email,
-        _id: user._id,
+        id: user.id,
         updatedAt: user.updatedAt,
         createdAt: user.createdAt
        };

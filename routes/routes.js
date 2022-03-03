@@ -26,12 +26,15 @@ router
 });
 
 router
-.route('/upload/:username')
-.post(userAuth, Uploads)
+.post('/upload', userAuth, async(req, res) => {
+    await Uploads(req.user, req, res) 
+
+});
 
 router
-.route('/download/:username')
-.post(userAuth, Download)
+.post('/download', userAuth, async(req, res) => {
+    await Download(req.user, req, res) 
+});
 
 router
 .route('/listfiles')

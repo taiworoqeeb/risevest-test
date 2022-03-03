@@ -39,4 +39,6 @@ const User = db.define('User', {
             default: 'user'
         }
 });
+
+
 module.exports = User;

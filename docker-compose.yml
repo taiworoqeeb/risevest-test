@@ -1,0 +1,42 @@
+version: '3'
+services:
+  redis:
+    image: redis:4
+  db:
+    image: postgres:14
+    container_name: local_pgdb
+    restart: always
+    networks:
+      - webnet
+    env_file:
+    - .env
+    ports:
+      - "54320:5432"
+    volumes:
+      - local_pgdata:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    networks:
+      - webnet
+    ports:
+      - "5050:80"
+    env_file:
+      - .env 
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+  web:
+    image: risevest-test
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    networks:
+      - webnet
+volumes:
+  local_pgdata:
+  pgadmin-data:
+networks:
+  webnet:
+        

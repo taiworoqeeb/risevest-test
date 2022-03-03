@@ -1,12 +1,12 @@
 const Sequelize = require('sequelize');
 require('dotenv').config();
 
-const database = process.env.DATABASE;
-const username = process.env.USER;
-const password = process.env.PASSWORD;
+const database = process.env.POSTGRES_DB;
+const username = process.env.POSTGRES_USER;
+const password = process.env.POSTGRES_PASSWORD;
 
 var db = new Sequelize(database, username, password, {
-    host: 'localhost',
+    host: 'localhost' || process.env.DB_HOST ,
     dialect: 'postgres',
   
     pool: {
