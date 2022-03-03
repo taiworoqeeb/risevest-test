@@ -30,6 +30,10 @@ const File = db.define('File', {
     }
 });
 
+(async() => {
+    await File.sync();
+})();
+
 File.belongsTo(User, {foreignKey: 'userid'})
 User.hasMany(File, {foreignKey: 'userid'});
 
